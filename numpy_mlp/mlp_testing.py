@@ -4,13 +4,13 @@ import mlp
 import mnist
  
  
-def main(hidden_size=128, seed=0, n_images=100, steps=200, lr=0.1):
+def main(hidden_sizes=(128,), seed=0, n_images=100, steps=200, lr=0.1):
     X_train, Y_train, _, _ = mnist.load_mnist()
     X = X_train[:n_images]
     y = Y_train[:n_images].astype(int)
     Y = mnist.one_hot(y)
  
-    params = mlp.initialize_parameters([784, hidden_size, 10], np.random.default_rng(seed))
+    params = mlp.initialize_parameters(mlp.layer_sizes_for(hidden_sizes), np.random.default_rng(seed))
  
     initial_loss, _ = mlp.softmax_ce(mlp.forward(params, X)[0], Y)
     print(f"initial loss {initial_loss:.3f}  (ln 10 = {np.log(10):.3f})")
@@ -32,5 +32,7 @@ def main(hidden_size=128, seed=0, n_images=100, steps=200, lr=0.1):
  
  
 if __name__ == "__main__":
-    main()
+    for hidden in [(128,), (64, 32), (64, 32, 16)]:
+        print(f"hidden layers {hidden}")
+        main(hidden_sizes=hidden)
     print("data checks passed")
